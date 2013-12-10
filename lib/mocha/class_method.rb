@@ -78,10 +78,13 @@ module Mocha
         else
           stubbee.__metaclass__.send(:define_method, method, @original_method)
         end
-      end
-      if @original_visibility
+        # Restoring the behavior of 0.12.8. This will fail with 'undefined method `find_by_id' for class `Class' (NameError)'
+        # when stubbing an ActiveRecord dynamic finder. In our case it was TimeChargesReservation#find_by_id.
         Module.instance_method(@original_visibility).bind(stubbee.__metaclass__).call(method)
       end
+      # if @original_visibility
+      #   Module.instance_method(@original_visibility).bind(stubbee.__metaclass__).call(method)
+      # end
     end
 
     def matches?(other)
